@@ -1,15 +1,21 @@
-package com.xmz.sqlitetest;
+package com.xmz.sqlitetest.tasks;
 
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
+import com.xmz.sqlitetest.R;
+import com.xmz.sqlitetest.ScrollChildSwipeRefreshLayout;
 import com.xmz.sqlitetest.data.Task;
 
 import java.util.ArrayList;
@@ -25,6 +31,8 @@ public class TasksFragment extends Fragment implements TasksContract.View {
     private TasksAdapter mListAdapter;
 
     private LinearLayout mTasksView;
+
+    private TextView mTasksLabel;
 
     public TasksFragment() {
 
@@ -54,21 +62,52 @@ public class TasksFragment extends Fragment implements TasksContract.View {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        View root = inflater.inflate(R.layout.tasks_frag, container, false);
+
+        ListView listView = (ListView) root.findViewById(R.id.tasks_list);
+        listView.setAdapter(mListAdapter);
+
+        mTasksLabel = (TextView) root.findViewById(R.id.title_label);
+        mTasksView = (LinearLayout) root.findViewById(R.id.tasksLL);
+
+        FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab_add_task);
+        fab.setImageResource(R.drawable.ic_add);
+        fab.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                mPresenter.createTask();
+            }
+        });
+
+        final ScrollChildSwipeRefreshLayout swipeRefreshLayout =
+                (ScrollChildSwipeRefreshLayout) root.findViewById(R.id.refresh_layout);
+        swipeRefreshLayout.setColorSchemeColors(
+                ContextCompat.getColor(getActivity(), R.color.colorPrimary),
+                ContextCompat.getColor(getActivity(), R.color.colorAccent),
+                ContextCompat.getColor(getActivity(), R.color.colorPrimaryDark)
+        );
+
+        swipeRefreshLayout.setScrollUpChild(listView);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mPresenter.populateTask();
+            }
+        });
+
+        setHasOptionsMenu(true);
+
+        return root;
+    }
+
+    @Override
+    public void showTasks(List<Task> tasks) {
+        mListAdapter.replaceData(tasks);
 
     }
 
     @Override
-    public void showTasksList() {
-
-    }
-
-    @Override
-    public void setId(String id) {
-
-    }
-
-    @Override
-    public void setDescription(String description) {
+    public void showEditTask() {
 
     }
 
@@ -137,5 +176,5 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         public void onTaskClick(Task clickedTask) {
             Log.i("log", "item click");
         }
-    }
+    };
 }

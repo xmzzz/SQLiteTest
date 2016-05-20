@@ -3,4 +3,8 @@
     <string name="action_settings">Settings</string>
     <string name="list_title">list title</string>
     <string name="list_content">content</string>
+    <string name="task_id">task id</string>
+    <string name="task_description">description</string>
+    <string name="edit_save">存 档</string>
+    <string name="edit_update">更 新</string>
 </resources>

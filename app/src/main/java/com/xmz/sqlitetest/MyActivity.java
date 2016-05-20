@@ -12,6 +12,9 @@ import android.view.MenuItem;
 
 import com.xmz.sqlitetest.data.source.TasksRepository;
 import com.xmz.sqlitetest.data.source.local.TasksLocalDataSource;
+import com.xmz.sqlitetest.edit.EditFragment;
+import com.xmz.sqlitetest.tasks.TasksFragment;
+import com.xmz.sqlitetest.tasks.TasksPresenter;
 import com.xmz.sqlitetest.util.ActivityUtils;
 
 public class MyActivity extends AppCompatActivity {
@@ -40,14 +43,16 @@ public class MyActivity extends AppCompatActivity {
         TasksFragment tasksFragment =
                 (TasksFragment) getSupportFragmentManager().findFragmentById(R.id.contentFrame);
         if (tasksFragment == null) {
-            tasksFragment = TasksFrament.newInstance();
+            tasksFragment = TasksFragment.newInstance();
             ActivityUtils.addFragmentToActivity(
                     getSupportFragmentManager(), tasksFragment, R.id.contentFrame);
-            )
         }
 
         mTasksPresenter = new TasksPresenter(
                 TasksRepository.getInstance(TasksLocalDataSource.getInstance(getApplicationContext())), tasksFragment);
+
+        EditFragment editFragment =
+                (EditFragment) getSupportFragmentManager().findFragmentById(R.id.contentEditFrame);
 
     }
 
