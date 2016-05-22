@@ -29,5 +29,7 @@ public interface TasksDataSource {
 
     void saveTask(Task task);
 
+    void refreshTasks();
+
 
 }

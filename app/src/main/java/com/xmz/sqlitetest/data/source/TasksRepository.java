@@ -106,4 +106,9 @@ public class TasksRepository implements TasksDataSource {
             return mCachedTasks.get(id);
         }
     }
+
+    @Override
+    public void refreshTasks() {
+        mCacheIsDirty = true;
+    }
 }

@@ -15,18 +15,22 @@ public interface TasksContract {
 
         void showTasks(List<Task> tasks);
 
-        void showEditTask();
+        void showEditTask(String taskId);
+
+        void showAddTask();
+
+        void showDeleteTask();
 
     }
 
     interface Presenter extends BasePresenter {
 
-//        void createTask(String id, String description);
+        void addNewTask();
 
-        void updateTask(String id, String description);
-
-        void populateTask();
+        void loadTasks(boolean forceUpdate);
 
         void editTask(Task task);
+
+        void deleteTask(Task task);
     }
 }

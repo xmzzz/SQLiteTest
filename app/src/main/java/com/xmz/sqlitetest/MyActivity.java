@@ -13,15 +13,20 @@ import android.view.MenuItem;
 import com.xmz.sqlitetest.data.source.TasksRepository;
 import com.xmz.sqlitetest.data.source.local.TasksLocalDataSource;
 import com.xmz.sqlitetest.edit.EditFragment;
+import com.xmz.sqlitetest.edit.EditPresenter;
 import com.xmz.sqlitetest.tasks.TasksFragment;
 import com.xmz.sqlitetest.tasks.TasksPresenter;
 import com.xmz.sqlitetest.util.ActivityUtils;
 
-public class MyActivity extends AppCompatActivity {
+public class MyActivity extends AppCompatActivity implements TasksFragment.Callbacks, EditFragment.Callbacks {
 
     private DrawerLayout mDrawerLayout;
 
     private TasksPresenter mTasksPresenter;
+
+    private EditPresenter mEditPresenter;
+
+    public boolean addOrEditTask = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,9 +56,31 @@ public class MyActivity extends AppCompatActivity {
         mTasksPresenter = new TasksPresenter(
                 TasksRepository.getInstance(TasksLocalDataSource.getInstance(getApplicationContext())), tasksFragment);
 
+    }
+
+
+    @Override
+    public void addTask() {
         EditFragment editFragment =
                 (EditFragment) getSupportFragmentManager().findFragmentById(R.id.contentEditFrame);
+        if (editFragment == null) {
+            editFragment = EditFragment.newInstance();
+            ActivityUtils.addFragmentToActivity(
+                    getSupportFragmentManager(), editFragment, R.id.contentEditFrame);
+        } else {
+//            getFragmentManager().beginTransaction().replace(R.id.contentEditFrame, editFragment).commit();
+        }
 
+    }
+
+    @Override
+    public void editTask(int id) {
+
+    }
+
+    @Override
+    public void showTasksList() {
+        mTasksPresenter.loadTasks(false);
     }
 
     private void setupDrawerContent(NavigationView navigationView) {

@@ -1,5 +1,6 @@
 package com.xmz.sqlitetest.tasks;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -14,6 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.xmz.sqlitetest.MyActivity;
 import com.xmz.sqlitetest.R;
 import com.xmz.sqlitetest.ScrollChildSwipeRefreshLayout;
 import com.xmz.sqlitetest.data.Task;
@@ -34,12 +36,21 @@ public class TasksFragment extends Fragment implements TasksContract.View {
 
     private TextView mTasksLabel;
 
+    private Callbacks mCallbacks;
+
     public TasksFragment() {
 
     }
 
     public static TasksFragment newInstance() {
         return new TasksFragment();
+    }
+
+    public interface Callbacks {
+
+        void addTask();
+
+        void editTask(int id);
     }
 
     @Override
@@ -52,6 +63,12 @@ public class TasksFragment extends Fragment implements TasksContract.View {
     public void onResume() {
         super.onResume();
         mPresenter.start();
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mCallbacks = (Callbacks)activity;
     }
 
     @Override
@@ -75,7 +92,7 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         fab.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                mPresenter.createTask();
+                mPresenter.addNewTask();
             }
         });
 
@@ -91,7 +108,7 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                mPresenter.populateTask();
+                mPresenter.loadTasks(false);
             }
         });
 
@@ -101,13 +118,18 @@ public class TasksFragment extends Fragment implements TasksContract.View {
     }
 
     @Override
-    public void showTasks(List<Task> tasks) {
-        mListAdapter.replaceData(tasks);
-
+    public void showAddTask() {
+        ((MyActivity)getActivity()).addOrEditTask = true;
+        mCallbacks.addTask();
     }
 
     @Override
-    public void showEditTask() {
+    public void showTasks(List<Task> tasks) {
+        mListAdapter.replaceData(tasks);
+    }
+
+    @Override
+    public void showEditTask(String taskId) {
 
     }
 
@@ -177,4 +199,9 @@ public class TasksFragment extends Fragment implements TasksContract.View {
             Log.i("log", "item click");
         }
     };
+
+    @Override
+    public void showDeleteTask() {
+
+    }
 }
